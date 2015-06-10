@@ -140,7 +140,7 @@ class Imap {
 		$this->address = $address;
 
 		// Open new IMAP connection
-		if ($mailbox = imap_open($address, $user, $pass)) {
+		if ($mailbox = @imap_open($address, $user, $pass)) {
 			$this->mailbox = $mailbox;
 		} else {
 			throw new \Exception("Error: " . imap_last_error());
@@ -655,7 +655,7 @@ class Imap {
 	 */
 	private function tickle() {
 		if (!imap_ping($this->mailbox)) {
-				$this->reconnect;
+			$this->reconnect;
 		}
 	}
 
