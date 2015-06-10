@@ -192,9 +192,9 @@ class Imap {
 			$draft = ($details->Draft == 'X');
 
 			// Get the message body.
-			$body = imap_fetchbody($this->mailbox, $messageId, 2);
-			if (!strlen($body) > 0) {
-				$body = imap_fetchbody($this->mailbox, $messageId, 1.2);
+			$body = imap_fetchbody($this->mailbox, $messageId, 1.1);
+			if(empty($body)) {
+				$body = imap_fetchbody($this->mailbox, $messageId, 1);
 			}
 
 			// Get the message body encoding.
@@ -294,7 +294,7 @@ class Imap {
 		$messageList = imap_search($this->mailbox, $searchFlag);
 
 		// Fetch overview of mailbox.
-		if(count($messageList) == 0) {
+		if(count($messageList) == 0 || ! $messageList) {
 			return(array());
 		} else {
 			$overviews = imap_fetch_overview($this->mailbox, implode(',', $messageList), 0);
