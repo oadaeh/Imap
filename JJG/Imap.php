@@ -288,16 +288,18 @@ class Imap {
 	 *
 	 * @return Associative array with message id as key and subject as value.
 	 */
-	public function getMessageIds() {
+	public function getMessageIds($searchFlag = 'ALL') {
 		$this->tickle();
 
+		$messageList = imap_search($this->mailbox, $searchFlag);
+
 		// Fetch overview of mailbox.
-		$number_messages = imap_num_msg($this->mailbox);
-		if ($number_messages) {
-			$overviews = imap_fetch_overview($this->mailbox, "1:" . imap_num_msg($this->mailbox), 0);
+		if(count($messageList) == 0) {
+			return(array());
 		} else {
-			$overviews = array();
+			$overviews = imap_fetch_overview($this->mailbox, implode(',', $messageList), 0);
 		}
+
 		$messageArray = array();
 
 		// Loop through message overviews, build message array.
