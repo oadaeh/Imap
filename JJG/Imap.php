@@ -214,14 +214,14 @@ class Imap {
 			// Build the message.
 			$message = array(
 				'raw_header' => $raw_header,
-				'to' => $details->toaddress,
-				'from' => $details->fromaddress,
-				'cc' => isset($details->ccaddress) ? $details->ccaddress : '',
-				'bcc' => isset($details->bccaddress) ? $details->bccaddress : '',
-				'reply_to' => isset($details->reply_toaddress) ? $details->reply_toaddress : '',
-				'sender' => isset($details->senderaddress) ? $details->senderaddress : '',
+				'to' => $this->decodeHeader($details->toaddress),
+				'from' => $this->decodeHeader($details->fromaddress),
+				'cc' => isset($details->ccaddress) ? $this->decodeHeader($details->ccaddress) : '',
+				'bcc' => isset($details->bccaddress) ? $this->decodeHeader($details->bccaddress) : '',
+				'reply_to' => isset($details->reply_toaddress) ? $this->decodeHeader($details->reply_toaddress) : '',
+				'sender' => isset($details->senderaddress) ? $this->decodeHeader($details->senderaddress) : '',
 				'date_sent' => $details->date,
-				'subject' => $details->subject,
+				'subject' => $this->decodeHeader($details->subject),
 				'deleted' => $deleted,
 				'answered' => $answered,
 				'draft' => $draft,
@@ -495,6 +495,25 @@ class Imap {
 
 		return $message;
 	 }
+
+	/**
+	 * Takes in a string encoded header and returns an string
+	 * decoded.
+	 *
+	 * @param $address (string)
+	 *   String with encoded header to be parsed.
+	 *
+	 * @return (string)
+	 *   String of decoded header.
+	 *
+	 */
+	public function decodeHeader($header) {
+		$returnHeader = '';
+		foreach(imap_mime_header_decode($header) as $headerPart) {
+			$returnHeader .= $headerPart->text;
+		}
+		return($returnHeader);
+	}
 
 	/**
 	 * Takes in a string of email addresses and returns an array of addresses
