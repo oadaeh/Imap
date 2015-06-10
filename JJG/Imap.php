@@ -60,9 +60,9 @@ class Imap {
 	 *
 	 * @return (empty)
 	 */
-	public function __construct($host, $user, $pass, $port = 993, $encryption = 'ssl', $folder = 'INBOX') {
+	public function __construct($host, $user, $pass, $port, $encryption = 'ssl', $folder = 'INBOX') {
 		if ((!isset($host)) || (!isset($user)) || (!isset($pass)) || (!isset($port))) {
-		  throw new Exception("Error: All Constructor values require a non NULL input.");
+			throw new \Exception("Error: Not all needed values given.");
 		}
 
 		$this->host = $host;
@@ -77,8 +77,8 @@ class Imap {
 			break;
 
 			default:
-				throw new Exception("Error: Unknown encryption. Valid: ssl / tls / none");
-			break:
+				throw new \Exception("Error: Unknown encryption. Valid: ssl / tls / none");
+			break;
 		}
 		$this->encryption = $encryption;
 
@@ -143,7 +143,7 @@ class Imap {
 		if ($mailbox = imap_open($address, $user, $pass)) {
 			$this->mailbox = $mailbox;
 		} else {
-			throw new Exception("Error: " . imap_last_error());
+			throw new \Exception("Error: " . imap_last_error());
 		}
 	}
 
@@ -231,7 +231,7 @@ class Imap {
 				'auto_response' => $autoresponse,
 			);
 		} else {
-			throw new Exception("Message could not be found: " . imap_last_error());
+			throw new \Exception("Message could not be found: " . imap_last_error());
 		}
 
 		return $message;
@@ -256,7 +256,7 @@ class Imap {
 
 		// Mark message for deletion.
 		if (!imap_delete($this->mailbox, $messageId)) {
-			throw new Exception("Message could not be deleted: " . imap_last_error());
+			throw new \Exception("Message could not be deleted: " . imap_last_error());
 		}
 
 		// Immediately delete the message if $immediate is TRUE.
@@ -642,7 +642,7 @@ class Imap {
 	private function reconnect() {
 		$this->mailbox = imap_open($this->address, $this->user, $this->pass);
 		if (!$this->mailbox) {
-			throw new Exception("Reconnection Failure: " . imap_last_error());
+			throw new \Exception("Reconnection Failure: " . imap_last_error());
 		}
 	}
 
